@@ -1,7 +1,8 @@
-#include "Board.h"
+#include "Game.h"
 
 int main() {
-	Board newBoard(4);
-	newBoard.show();
+
+	Game* newGame = new Game(4);
+	newGame->startGame();
 	return 0;
 }
