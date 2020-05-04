@@ -10,7 +10,7 @@ Game::Game() {
 
 Game::Game(int size) {
 	player_1 = new Player(What::cross, Who::player1, true);
-	player_2 = new Player(What::circle, Who::player2, true);
+	player_2 = new Player(What::circle, Who::player2, false);
 	sizeOfBoard = size;
 	gameBoard = new Board(size);
 	
@@ -19,6 +19,7 @@ Game::Game(int size) {
 void Game::startGame() {
 	int i = sizeOfBoard * sizeOfBoard;
 	gameBoard->show();
+	std::cout << "----------------------\n";
 	do {
 		if (gameBoard->whoseMove == Who::player1){
 			if (player_1->choseMove(gameBoard) == true) {

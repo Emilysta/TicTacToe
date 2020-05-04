@@ -2,7 +2,7 @@
 
 int main() {
 
-	Game* newGame = new Game(4);
+	Game* newGame = new Game(3);
 	newGame->startGame();
 	return 0;
 }

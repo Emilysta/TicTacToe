@@ -6,9 +6,20 @@ Board::Board() {
     size = 0;
     board = nullptr;
     whoseMove = Who::none;
-    lastMove = 1000;
+    countOfMovesToEnd = 0;
     firstDiagonal = nullptr;
     secondDiagonal = nullptr;
+}
+Board::Board(const Board& boardToCopy) {
+    size = boardToCopy.size;
+    board = new What[size * size];
+    for (int i = 0; i < size*size; ++i) { 
+        board[i] = boardToCopy.board[i];
+    }
+    whoseMove = boardToCopy.whoseMove;
+    firstDiagonal = boardToCopy.firstDiagonal;
+    secondDiagonal = boardToCopy.secondDiagonal;
+    countOfMovesToEnd = boardToCopy.countOfMovesToEnd;
 }
 
 Board::Board(int newSize) {
@@ -20,7 +31,7 @@ Board::Board(int newSize) {
         board[i] = What::none;
     }
     whoseMove = Who(std::rand() % 2 + 1);
-    lastMove = NULL;
+    countOfMovesToEnd = size * size;
     firstDiagonal = new int[size];
     int u = size + 1;
     for (int j = 0; j < size; j++)
@@ -35,7 +46,7 @@ Board::Board(int newSize) {
     }
  }
 
-Board::~Board() {
+Board::~Board() { //? co przy kopii
     delete[] board;
 }
 
@@ -105,4 +116,43 @@ void Board::show() {
         }
         std::cout << std::endl;
     }
+}
+int Board::openLines(What whatChar) {
+    int countOfOpenLines=size*2+2;
+    What opponentChar = What::none;
+    if (whatChar == What::circle) {
+        opponentChar = What::cross;
+    }
+    else {
+        opponentChar = What::circle;
+    }
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (board[i * size + j] == opponentChar) {
+                --countOfOpenLines;
+                j = size;
+            }
+        }
+    }
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (board[j * size + i] == opponentChar) {
+                --countOfOpenLines;
+                j = size;
+            }
+        }
+    }
+    for (int i = 0; i < size; i++) {
+        if (board[firstDiagonal[i]] == opponentChar) {
+            --countOfOpenLines;
+            i = size;
+        }
+    }
+    for (int i = 0; i < size; i++) {
+        if (board[secondDiagonal[i]] == opponentChar) {
+            --countOfOpenLines;
+            i = size;
+        }
+    }
+    return countOfOpenLines;
 }

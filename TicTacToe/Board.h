@@ -6,13 +6,14 @@ class Board{
 	int size;
 	What* board; //tablica znakow 'X', 'O'
 	Who whoseMove; //czyj ruch w obecnej kolejce
-	int lastMove;
+	int countOfMovesToEnd;
 	int* firstDiagonal; //indeksy elementów pierwszej z przekatnych
 	int* secondDiagonal; //indeksy elementów drugiej z przekatnych
 	friend class Player;
 	friend class Game;
 public: 
 	Board();
+	Board(const Board& boardToCopy);
 	Board(int newSize);
 	~Board();
 	bool checkVertical(int i_column);
@@ -21,5 +22,6 @@ public:
 	bool checkSecondDiagonal();
 	bool isEnd(int index);
 	void show();
+	int openLines(What whatChar);
 };
 
