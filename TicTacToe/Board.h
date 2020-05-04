@@ -4,11 +4,10 @@ enum class What{cross='X',circle='O',none='_'};
 enum class Who{player1=1, player2=2, none =10};
 class Board{
 	int size;
-	What* board; //tablica znakow 'X', 'O'
+	What** board; //tablica znakow 'X', 'O' n x n
 	Who whoseMove; //czyj ruch w obecnej kolejce
 	int countOfMovesToEnd;
-	int* firstDiagonal; //indeksy elementów pierwszej z przekatnych
-	int* secondDiagonal; //indeksy elementów drugiej z przekatnych
+	Who winner;
 	friend class Player;
 	friend class Game;
 public: 
@@ -20,8 +19,10 @@ public:
 	bool checkHorizontal(int i_row);
 	bool checkFirstDiagonal();
 	bool checkSecondDiagonal();
-	bool isEnd(int index);
+	bool isEnd(int row,int column);
 	void show();
-	int openLines(What whatChar);
+	bool isMoveLeft();
+	int evaluate(What sign);
+	Who checkWinner();
 };
 

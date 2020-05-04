@@ -11,10 +11,7 @@ public:
 	void setWhatChar(What newWhatChar);
 	What& getWhatChar();
 	bool choseMove(Board* _board);
-	int searchForOption(Board _board,Who player);
-	int algorithmAlfaBeta(Board _board,int maxdepth, int _alpha, int _beta);
-	int alpha(Board _board, int maxdepth, int _alpha, int _beta, int& index);
-	int beta(Board _board, int maxdepth, int _alpha, int _beta, int& index);
-
+	int searchForOption(Board _board,Who player,int& row, int& column);
+	int minimax(Board _board,int depth,bool isMax);
+	What getOpponentChar();
 };
-

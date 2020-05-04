@@ -9,7 +9,7 @@ Game::Game() {
 }
 
 Game::Game(int size) {
-	player_1 = new Player(What::cross, Who::player1, true);
+	player_1 = new Player(What::cross, Who::player1, false);
 	player_2 = new Player(What::circle, Who::player2, false);
 	sizeOfBoard = size;
 	gameBoard = new Board(size);

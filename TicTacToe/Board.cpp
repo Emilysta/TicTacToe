@@ -6,53 +6,52 @@ Board::Board() {
     size = 0;
     board = nullptr;
     whoseMove = Who::none;
+    winner = Who::none;
     countOfMovesToEnd = 0;
-    firstDiagonal = nullptr;
-    secondDiagonal = nullptr;
 }
 Board::Board(const Board& boardToCopy) {
     size = boardToCopy.size;
-    board = new What[size * size];
-    for (int i = 0; i < size*size; ++i) { 
-        board[i] = boardToCopy.board[i];
+    board = new What*[size];
+    for (int i = 0; i < size; ++i) { 
+        board[i] = new What[size];
+    }
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; j++) {
+            board[i][j]= boardToCopy.board[i][j];
+        }
     }
     whoseMove = boardToCopy.whoseMove;
-    firstDiagonal = boardToCopy.firstDiagonal;
-    secondDiagonal = boardToCopy.secondDiagonal;
+    winner = boardToCopy.winner;
     countOfMovesToEnd = boardToCopy.countOfMovesToEnd;
 }
 
 Board::Board(int newSize) {
     srand((unsigned)(time(NULL)));
     size = newSize;
-    board = new What[size*size]; //tablica o rozmiarze np 4x4 
-                                 //zapisana jako tablica od 0 do 15 
-    for (int i = 0; i < size * size; i++) {
-        board[i] = What::none;
+    board = new What * [size];//tablica o rozmiarze np 4x4 
+    for (int i = 0; i < size; ++i) {
+        board[i] = new What[size];
     }
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            board[i][j] = What::none;
+        }
+    }
+    winner = Who::none;
     whoseMove = Who(std::rand() % 2 + 1);
     countOfMovesToEnd = size * size;
-    firstDiagonal = new int[size];
-    int u = size + 1;
-    for (int j = 0; j < size; j++)
-    {
-        firstDiagonal[j] = j * u;
-    }
-    secondDiagonal = new int[size];
-    int u2 = size - 1;
-    for (int j = 0; j < size; j++)
-    {
-        secondDiagonal[j] = (j+1) * u2;
-    }
  }
 
-Board::~Board() { //? co przy kopii
+Board::~Board() {
+    for (int i = 0; i < size; i++) {
+        delete board[i];
+    }
     delete[] board;
 }
 
 bool Board::checkVertical(int i_column) { //sprawdz w pionie
     for (int i = 0; i < size-1; i++) {//i_column indeks sprawdzanej kolumny
-        if (board[i_column + size * i] != board[i_column + size *(i+1)]) {
+        if (board[i][i_column] != board[i+1][i_column]) {
             return false;
         }
     }
@@ -61,7 +60,7 @@ bool Board::checkVertical(int i_column) { //sprawdz w pionie
 
 bool Board::checkHorizontal(int i_row) { //sprawdz w poziomie
     for (int i = 0; i < size - 1; i++) { //i_row indeks sprawdzanego rzedu 
-        if (board[i_row*size+i] != board[i_row*size+i+1]) {
+        if (board[i_row][i] != board[i_row][i+1]) {
             return false;
         }
     }
@@ -69,7 +68,7 @@ bool Board::checkHorizontal(int i_row) { //sprawdz w poziomie
 }
 bool Board::checkFirstDiagonal() {
     for (int i = 0; i < size - 1; i++) { //sprawdzenie czy na przekatnej \ nie ma wygranej 
-        if (board[firstDiagonal[i]] != board[firstDiagonal[i+1]]) {
+        if (board[i][i] != board[i+1][i+1]) {
             return false;
         }
     }
@@ -77,30 +76,26 @@ bool Board::checkFirstDiagonal() {
 }
 bool Board::checkSecondDiagonal() {
     for (int i = 0; i < size - 1; i++) { //sprawdzenie czy na przekatnej / nie ma wygranej 
-        if (board[secondDiagonal[i]] != board[secondDiagonal[i + 1]]) {
+        if (board[i][size-i-1] != board[i+1][size-(i+1)-1]) {
             return false;
         }
     }
     return true;
 }
 
-bool Board::isEnd(int index) {
+bool Board::isEnd(int row,int column) {
+    if (checkVertical(column) == true)
+        return true;
+    if (checkHorizontal(row) == true) {
+        return true;
+    }
+    if (row == column) {
+        if (checkFirstDiagonal() == true) {
+            return true;
+        }
+    }
     for (int i = 0; i < size; i++) {
-        if (index % size == i) {
-            if (checkVertical(i) == true) {
-                return true;
-            }
-        }
-        if (index / size == i) {
-            if (checkHorizontal(i) == true) {
-                return true;
-            }
-        }
-        if (index == firstDiagonal[i]) {
-            if (checkFirstDiagonal() == true)
-                return true;
-        }
-        if (index == secondDiagonal[i]) {
+        if ((row == i && column == size - i - 1)) {
             if (checkSecondDiagonal() == true)
                 return true;
         }
@@ -111,48 +106,72 @@ bool Board::isEnd(int index) {
 void Board::show() {
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < size; j++) {
-            std::cout << (char)(board[i*size + j]);
+            std::cout << (char)(board[i][j]);
             std::cout << " ";
         }
         std::cout << std::endl;
     }
 }
-int Board::openLines(What whatChar) {
-    int countOfOpenLines=size*2+2;
-    What opponentChar = What::none;
-    if (whatChar == What::circle) {
-        opponentChar = What::cross;
+
+bool Board::isMoveLeft() {
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < size; j++) {
+            if (board[i][j] == What::none)
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+
+}
+
+int Board::evaluate(What sign) {
+    for (int i = 0; i < size; i++)
+    {
+        if (checkHorizontal(i)) {
+            if (board[i][0] == sign) {
+                return 10;
+            }
+            else {
+                return -10;
+            }
+        }
+        if (checkVertical(i)) {
+            if (board[0][i] == sign) {
+                return 10;
+            }
+            else {
+                return -10;
+            }
+        }
+        
+    }
+    if (checkFirstDiagonal()) {
+        if (board[0][0] == sign) {
+            return 10;
+        }
+        else {
+            return -10;
+        }
+    }
+    if (checkSecondDiagonal()) {
+        if (board[0][size-1] == sign) {
+            return 10;
+        }
+        else {
+            return -10;
+        }
+    }
+
+    return 0;
+}
+
+Who Board::checkWinner() {
+    if (winner == Who::none && isMoveLeft() == false) {
+        return Who::none;
     }
     else {
-        opponentChar = What::circle;
+        return winner;
     }
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            if (board[i * size + j] == opponentChar) {
-                --countOfOpenLines;
-                j = size;
-            }
-        }
-    }
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < size; j++) {
-            if (board[j * size + i] == opponentChar) {
-                --countOfOpenLines;
-                j = size;
-            }
-        }
-    }
-    for (int i = 0; i < size; i++) {
-        if (board[firstDiagonal[i]] == opponentChar) {
-            --countOfOpenLines;
-            i = size;
-        }
-    }
-    for (int i = 0; i < size; i++) {
-        if (board[secondDiagonal[i]] == opponentChar) {
-            --countOfOpenLines;
-            i = size;
-        }
-    }
-    return countOfOpenLines;
 }
