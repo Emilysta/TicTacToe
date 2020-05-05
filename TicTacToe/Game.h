@@ -9,7 +9,7 @@ class Game{
 
 public: 
 	Game();
-	Game(int size);
+	Game(int size,int inLine);
 	~Game() =default;
 	void startGame();
 	void show();

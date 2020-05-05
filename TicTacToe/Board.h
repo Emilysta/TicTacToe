@@ -9,20 +9,21 @@ class Board{
 	int countOfMovesToEnd;
 	Who winner;
 	friend class Player;
-	friend class Game;
+	int  howManyInLine;
 public: 
 	Board();
 	Board(const Board& boardToCopy);
-	Board(int newSize);
+	Board(int newSize, int inLine);
 	~Board();
-	bool checkVertical(int i_column);
-	bool checkHorizontal(int i_row);
-	bool checkFirstDiagonal();
-	bool checkSecondDiagonal();
-	bool isEnd(int row,int column);
+	int checkVertical(int i_column,What sign);
+	int checkHorizontal(int i_row, What sign);
+	int checkFirstDiagonal(What sign);
+	int checkSecondDiagonal(What sign);
+	int isEnd(int row,int column, What sign);
 	void show();
 	bool isMoveLeft();
 	int evaluate(What sign);
 	Who checkWinner();
+	Who getWhoseMove();
 };
 

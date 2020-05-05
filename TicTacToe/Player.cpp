@@ -34,7 +34,7 @@ bool Player::choseMove(Board* _board) {
 
 		_board->board[row][column] = whatChar;
 		_board->countOfMovesToEnd--;
-		if (_board->isEnd(row,column) == true) {
+		if (_board->isEnd(row,column,whatChar) !=0) {
 			return true;
 		}
 		if (_board->whoseMove == Who::player1) {
@@ -50,7 +50,7 @@ bool Player::choseMove(Board* _board) {
 		searchForOption(*_board,whatPlayer,row, column);
 		_board->board[row][column] = whatChar;
 		_board->countOfMovesToEnd--;
-		if (_board->isEnd(row,column) == true) {
+		if (_board->isEnd(row,column,whatChar) != 0) {
 			return true;
 		}
 		if (whatPlayer == Who::player1) {
@@ -81,14 +81,15 @@ int Player::searchForOption(Board _board,Who player,int& _row,int& _column) {
 	}
 
 	int maxValue = M_INF;
+	int scoreForMove = 0;
 	
 	for (int i = 0; i < _board.size; i++) {
 		for (int j = 0; j < _board.size; j++) {
 			if (_board.board[i][j] == What::none) {
 				_board.board[i][j] = whatChar;
-				int scoreForMove =minimax(_board,0,false);
+				scoreForMove =minimax(_board,0,false);
+				/*std::cout << scoreForMove << " " << i << " " << j<<std::endl;*/
 				_board.board[i][j] = What::none;
-				std::cout << "Waga: " << scoreForMove << "Rzad: " << i << "Kolumna" << j << std::endl;
 				if (scoreForMove > maxValue) {
 					_row = i;
 					_column = j;
@@ -97,7 +98,7 @@ int Player::searchForOption(Board _board,Who player,int& _row,int& _column) {
 			}
 		}
 	}
-	
+	return 0;
 }
 
 int Player::minimax(Board _board,int depth, bool isMax){
@@ -109,17 +110,18 @@ int Player::minimax(Board _board,int depth, bool isMax){
 		return scores+depth ;
 	}
 	
-	if (_board.isMoveLeft()==false) {
+	if (_board.isMoveLeft()==false || depth ==5) {
 		return 0;
 	}
-
+	int maxValue;
+	int scoreForMove = 0;
 	if (isMax){
-		int maxValue = M_INF;
+		maxValue = M_INF;
 		for (int i = 0; i < _board.size; i++) {
 			for (int j = 0; j < _board.size; j++) {
 				if (_board.board[i][j] == What::none) {
 					_board.board[i][j] = whatChar;
-					int scoreForMove = minimax(_board,depth+1,false);
+					scoreForMove = minimax(_board,depth+1,false);
 					maxValue = std::max(scoreForMove, maxValue);
 					_board.board[i][j]=What::none;
 				}
@@ -128,18 +130,18 @@ int Player::minimax(Board _board,int depth, bool isMax){
 		return maxValue;
 	}
 	else {
-		int minValue = P_INF;
+		int maxValue = P_INF;
 		for (int i = 0; i < _board.size; i++) {
 			for (int j = 0; j < _board.size; j++) {
 				if (_board.board[i][j] == What::none) {
 					_board.board[i][j] = getOpponentChar();
-					int scoreForMove = minimax(_board,depth+1,true);
-					minValue = std::min(scoreForMove, minValue);
+					scoreForMove = minimax(_board,depth+1,true);
+					maxValue = std::min(scoreForMove, maxValue);
 					_board.board[i][j] = What::none;
 				}
 			}
 		}
-		return minValue;
+		return maxValue;
 	}
 }
 

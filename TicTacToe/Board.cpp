@@ -8,6 +8,7 @@ Board::Board() {
     whoseMove = Who::none;
     winner = Who::none;
     countOfMovesToEnd = 0;
+    howManyInLine = 0;
 }
 Board::Board(const Board& boardToCopy) {
     size = boardToCopy.size;
@@ -23,9 +24,10 @@ Board::Board(const Board& boardToCopy) {
     whoseMove = boardToCopy.whoseMove;
     winner = boardToCopy.winner;
     countOfMovesToEnd = boardToCopy.countOfMovesToEnd;
+    howManyInLine = boardToCopy.howManyInLine;
 }
 
-Board::Board(int newSize) {
+Board::Board(int newSize,int inLine) {
     srand((unsigned)(time(NULL)));
     size = newSize;
     board = new What * [size];//tablica o rozmiarze np 4x4 
@@ -40,6 +42,7 @@ Board::Board(int newSize) {
     winner = Who::none;
     whoseMove = Who(std::rand() % 2 + 1);
     countOfMovesToEnd = size * size;
+    howManyInLine = inLine;
  }
 
 Board::~Board() {
@@ -49,58 +52,144 @@ Board::~Board() {
     delete[] board;
 }
 
-bool Board::checkVertical(int i_column) { //sprawdz w pionie
-    for (int i = 0; i < size-1; i++) {//i_column indeks sprawdzanej kolumny
-        if (board[i][i_column] != board[i+1][i_column]) {
-            return false;
+int Board::checkVertical(int i_column,What sign) { //sprawdz w pionie
+    What opposite;
+    if (sign == What::circle) {
+        opposite = What::cross;
+    }
+    else {
+        opposite = What::circle;
+    }
+    int count1=0;
+    int count2=0;
+    for (int i = 0; i < size; i++) {//i_column indeks sprawdzanej kolumny
+        if (board[i][i_column] ==sign) {
+            ++count1;
+            count2 = 0;
+            if (count1 == howManyInLine) {
+                return 10;
+            }
+        }
+        else if (board[i][i_column] == opposite) {
+            ++count2;
+            count1 = 0;
+            if (count2 == howManyInLine) {
+                return -10;
+            }
         }
     }
-    return true;
+    return 0;
 }
 
-bool Board::checkHorizontal(int i_row) { //sprawdz w poziomie
-    for (int i = 0; i < size - 1; i++) { //i_row indeks sprawdzanego rzedu 
-        if (board[i_row][i] != board[i_row][i+1]) {
-            return false;
+int Board::checkHorizontal(int i_row,What sign) { //sprawdz w poziomie
+    What opposite;
+    if (sign == What::circle) {
+        opposite = What::cross;
+    }
+    else {
+        opposite = What::circle;
+    }
+    int count1 = 0;
+    int count2 = 0;
+    for (int i = 0; i < size; i++) { //i_row indeks sprawdzanego rzedu 
+        if (board[i_row][i] == sign) {
+            ++count1;
+            count2 = 0;
+            if (count1 == howManyInLine) {
+                return 10;
+            }
+        }
+        else if (board[i_row][i] == opposite) {
+            ++count2;
+            count1 = 0;
+            if (count2 == howManyInLine) {
+                return -10;
+            }
         }
     }
-    return true;
+    return 0;
 }
-bool Board::checkFirstDiagonal() {
-    for (int i = 0; i < size - 1; i++) { //sprawdzenie czy na przekatnej \ nie ma wygranej 
-        if (board[i][i] != board[i+1][i+1]) {
-            return false;
+int Board::checkFirstDiagonal(What sign) {
+    What opposite;
+    if (sign == What::circle) {
+        opposite = What::cross;
+    }
+    else {
+        opposite = What::circle;
+    }
+    int count1 = 0;
+    int count2 = 0;
+    for (int i = 0; i < size; i++) { //sprawdzenie czy na przekatnej \ nie ma wygranej 
+        if (board[i][i] == sign) {
+            ++count1;
+            count2 = 0;
+            if (count1 == howManyInLine) {
+                return 10;
+            }
+        }
+        else if (board[i][i] == opposite) {
+            ++count2;
+            count1 = 0;
+            if (count2 == howManyInLine) {
+                return -10;
+            }
         }
     }
-    return true;
+    return 0;
 }
-bool Board::checkSecondDiagonal() {
-    for (int i = 0; i < size - 1; i++) { //sprawdzenie czy na przekatnej / nie ma wygranej 
-        if (board[i][size-i-1] != board[i+1][size-(i+1)-1]) {
-            return false;
+int Board::checkSecondDiagonal(What sign) {
+    What opposite;
+    if (sign == What::circle) {
+        opposite = What::cross;
+    }
+    else {
+        opposite = What::circle;
+    }
+    int count1 = 0;
+    int count2 = 0;
+    for (int i = 0; i < size; i++) { //sprawdzenie czy na przekatnej / nie ma wygranej 
+        if (board[i][size - i - 1] == sign) {
+            ++count1;
+            count2 = 0;
+            if (count1 == howManyInLine) {
+                return 10;
+            }
+        }
+        else if (board[i][size - i - 1] == opposite) {
+            ++count2;
+            count1 = 0;
+            if (count2 == howManyInLine) {
+                return -10;
+            }
         }
     }
-    return true;
+    return 0;
 }
 
-bool Board::isEnd(int row,int column) {
-    if (checkVertical(column) == true)
-        return true;
-    if (checkHorizontal(row) == true) {
-        return true;
+int Board::isEnd(int row,int column,What sign) {
+    int Value = checkVertical(column, sign);
+    if (Value != 0) {
+       return Value;
+    }
+    Value = checkHorizontal(row, sign);
+    if (Value != 0) {
+       return Value;
     }
     if (row == column) {
-        if (checkFirstDiagonal() == true) {
-            return true;
+        Value = checkFirstDiagonal(sign);
+        if (Value != 0) {
+            return Value;
         }
     }
     for (int i = 0; i < size; i++) {
         if ((row == i && column == size - i - 1)) {
-            if (checkSecondDiagonal() == true)
-                return true;
+            Value = checkSecondDiagonal(sign);
+            if (Value != 0) {
+                return Value;
+            }
         }
     }
-    return false;
+    return 0;
 }
 
 void Board::show() {
@@ -111,6 +200,7 @@ void Board::show() {
         }
         std::cout << std::endl;
     }
+    std::cout << "---------" << std::endl;
 }
 
 bool Board::isMoveLeft() {
@@ -129,39 +219,22 @@ bool Board::isMoveLeft() {
 int Board::evaluate(What sign) {
     for (int i = 0; i < size; i++)
     {
-        if (checkHorizontal(i)) {
-            if (board[i][0] == sign) {
-                return 10;
-            }
-            else {
-                return -10;
-            }
+        int Value = checkHorizontal(i, sign);
+        if (Value!=0) {
+            return Value;
         }
-        if (checkVertical(i)) {
-            if (board[0][i] == sign) {
-                return 10;
-            }
-            else {
-                return -10;
-            }
-        }
-        
-    }
-    if (checkFirstDiagonal()) {
-        if (board[0][0] == sign) {
-            return 10;
-        }
-        else {
-            return -10;
+        Value = checkVertical(i, sign);
+        if (Value != 0) {
+            return Value;
         }
     }
-    if (checkSecondDiagonal()) {
-        if (board[0][size-1] == sign) {
-            return 10;
-        }
-        else {
-            return -10;
-        }
+    int Value = checkFirstDiagonal(sign);
+    if (Value != 0) {
+        return Value;
+    }
+    Value = checkSecondDiagonal(sign);
+    if (Value != 0) {
+        return Value;
     }
 
     return 0;
@@ -174,4 +247,8 @@ Who Board::checkWinner() {
     else {
         return winner;
     }
+}
+
+Who Board::getWhoseMove() {
+    return whoseMove;
 }

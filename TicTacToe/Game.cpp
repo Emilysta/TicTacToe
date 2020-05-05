@@ -8,11 +8,11 @@ Game::Game() {
 	sizeOfBoard = 0;
 }
 
-Game::Game(int size) {
+Game::Game(int size,int inLine) {
 	player_1 = new Player(What::cross, Who::player1, false);
-	player_2 = new Player(What::circle, Who::player2, false);
+	player_2 = new Player(What::circle, Who::player2,false);
 	sizeOfBoard = size;
-	gameBoard = new Board(size);
+	gameBoard = new Board(size,inLine);
 	
 }
 
@@ -21,7 +21,7 @@ void Game::startGame() {
 	gameBoard->show();
 	std::cout << "----------------------\n";
 	do {
-		if (gameBoard->whoseMove == Who::player1){
+		if (gameBoard->getWhoseMove() == Who::player1){
 			if (player_1->choseMove(gameBoard) == true) {
 				break;
 			}
