@@ -13,16 +13,16 @@ class Board{
 public: 
 	Board();
 	Board(const Board& boardToCopy);
-	Board(int newSize, int inLine);
+	Board(int newSize, int inLine, Who start);
 	~Board();
 	int checkVertical(int i_column,What sign);
 	int checkHorizontal(int i_row, What sign);
 	int checkFirstDiagonal(What sign);
 	int checkSecondDiagonal(What sign);
+	int checkDiagonals(int i, int j,What sign);
 	int isEnd(int row,int column, What sign);
 	void show();
 	bool isMoveLeft();
-	int evaluate(What sign);
 	Who checkWinner();
 	Who getWhoseMove();
 };

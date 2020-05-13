@@ -9,9 +9,16 @@ class Game{
 
 public: 
 	Game();
-	Game(int size,int inLine);
+	Game(int size,int inLine, Who start);
 	~Game() =default;
-	void startGame();
-	void show();
+	bool playerMove(int move); //ruch gracza
+	bool computerMove(int& move); //rych AI
+	void show(); //wyswieltanie planszy
+	int getSize(); //zwraca rozmiar planszy - jelsi plansza 4x4 to zwraca 4
+	char getP1(); //zwraca znak playera 1
+	char getP2(); // zwraca znak playera 2
+	bool isEnd(); // true jesli nie ma juz ruchów, false jesli s¹ jeszcze jakies ruchy
+	Who whoseMove(); //zrraca informacje kogo ruch jest obecnie.
 };
+
 

@@ -11,55 +11,47 @@ Player::Player()
 	isHuman = true;
 }
 
-Player::Player(What newWhatChar,Who newWhatPlayer, bool _ishuman) {
+Player::Player(What newWhatChar, Who newWhatPlayer, bool _ishuman) {
 	whatChar = newWhatChar;
 	whatPlayer = newWhatPlayer;
 	isHuman = _ishuman;
 }
 
-bool Player::choseMove(Board* _board) {
-	int row;
-	int column;
-	if (isHuman == true) {
-		do {
-			do {
-				std::cout << "Wybierz ruch rzad: ";
-				std::cin >> row;
-			} while (row < 0 || row >= _board->size);
-			do {
-				std::cout << "Wybierz ruch kolumne: ";
-				std::cin >> column;
-			} while (column < 0 || column >= _board->size);
-		} while ( _board->board[row][column] != What::none);
+bool Player::choseMove(Board* _board, int _row, int _column) { //ruch uzytkownika 
+	int row = _row;
+	int column = _column;
 
-		_board->board[row][column] = whatChar;
-		_board->countOfMovesToEnd--;
-		if (_board->isEnd(row,column,whatChar) !=0) {
-			return true;
-		}
-		if (_board->whoseMove == Who::player1) {
-			_board->whoseMove = Who::player2;
-		}
-		else {
-			_board->whoseMove = Who::player1;
-		}
+	_board->board[row][column] = whatChar;
+	_board->countOfMovesToEnd--;
+	if (_board->isEnd(row, column, whatChar) != 0) {
+		return true;
+	}
+	
+	if (_board->whoseMove == Who::player1) {
+		_board->whoseMove = Who::player2;
 	}
 	else {
-		row = 0;
-		column = 0;
-		searchForOption(*_board,whatPlayer,row, column);
-		_board->board[row][column] = whatChar;
-		_board->countOfMovesToEnd--;
-		if (_board->isEnd(row,column,whatChar) != 0) {
-			return true;
-		}
-		if (whatPlayer == Who::player1) {
-			_board->whoseMove = Who::player2;
-		}
-		else
-		{
-			_board->whoseMove = Who::player1;
-		}
+		_board->whoseMove = Who::player1;
+	}
+	return false;
+}
+
+bool Player::choseMove(Board* _board,int& move) { //ruch komputera
+	int row = 0;
+	int column = 0;
+	searchForOption(_board, whatPlayer, row, column); //poszukiwanie opcji ruchu dla komputera 
+	_board->board[row][column] = whatChar;
+	_board->countOfMovesToEnd--;
+	move = row * _board->size + column;
+	if (_board->isEnd(row, column, whatChar) != 0) {
+		return true;
+	}
+	if (whatPlayer == Who::player1) {
+		_board->whoseMove = Who::player2;
+	}
+	else
+	{
+		_board->whoseMove = Who::player1;
 	}
 	return false;
 }
@@ -72,24 +64,23 @@ What& Player::getWhatChar() {
 	return whatChar;
 }
 
-int Player::searchForOption(Board _board,Who player,int& _row,int& _column) {
-	int tab[2] = { 0,_board.size - 1 };
-	if (_board.countOfMovesToEnd == _board.size * _board.size) {
+int Player::searchForOption(Board* _board, Who player, int& _row, int& _column) { //jesli rusza sie jako pierwszy to losuje sposrod "naroznikow" planszy
+	//jesli jako pierwszy rusza sie uzytkownik to przeszukuje za pomoca algorytmu ciêæ alfa-beta
+	int tab[2] = { 0,_board->size - 1 };
+	if (_board->countOfMovesToEnd == _board->size * _board->size) {
 		_row = tab[rand() % 2];
-		_column = tab[rand() % 2]; 
+		_column = tab[rand() % 2];
 		return 0;
 	}
 
 	int maxValue = M_INF;
 	int scoreForMove = 0;
-	
-	for (int i = 0; i < _board.size; i++) {
-		for (int j = 0; j < _board.size; j++) {
-			if (_board.board[i][j] == What::none) {
-				_board.board[i][j] = whatChar;
-				scoreForMove =minimax(_board,0,false);
-				/*std::cout << scoreForMove << " " << i << " " << j<<std::endl;*/
-				_board.board[i][j] = What::none;
+	for (int i = 0; i < _board->size; i++) {
+		for (int j = 0; j < _board->size; j++) {
+			if (_board->board[i][j] == What::none) {
+				_board->board[i][j] = whatChar;
+				scoreForMove = minimax(_board, i, j, 0, false, M_INF, P_INF);
+				_board->board[i][j] = What::none;
 				if (scoreForMove > maxValue) {
 					_row = i;
 					_column = j;
@@ -101,29 +92,35 @@ int Player::searchForOption(Board _board,Who player,int& _row,int& _column) {
 	return 0;
 }
 
-int Player::minimax(Board _board,int depth, bool isMax){
-	int scores = _board.evaluate(whatChar);
+int Player::minimax(Board* _board, int i, int j, int depth, bool isMax, int alpha, int beta) {
+
+	int scores = _board->isEnd(i, j, whatChar);
 	if (scores == 10) {
-		return scores-depth ;
+		return scores - depth;
 	}
 	if (scores == -10) {
-		return scores+depth ;
+		return scores + depth;
 	}
-	
-	if (_board.isMoveLeft()==false || depth ==5) {
+	if (_board->isMoveLeft() == false || depth == (2 * _board->size - _board->howManyInLine+2)) {
 		return 0;
 	}
+
 	int maxValue;
 	int scoreForMove = 0;
-	if (isMax){
+	if (isMax) {
 		maxValue = M_INF;
-		for (int i = 0; i < _board.size; i++) {
-			for (int j = 0; j < _board.size; j++) {
-				if (_board.board[i][j] == What::none) {
-					_board.board[i][j] = whatChar;
-					scoreForMove = minimax(_board,depth+1,false);
+		for (int i = 0; i < _board->size; i++) {
+			for (int j = 0; j < _board->size; j++) {
+				if (_board->board[i][j] == What::none) {
+					_board->board[i][j] = whatChar;
+					scoreForMove = minimax(_board, i, j, depth + 1, false, alpha, beta);
 					maxValue = std::max(scoreForMove, maxValue);
-					_board.board[i][j]=What::none;
+					alpha = std::max(alpha, maxValue);
+					_board->board[i][j] = What::none;
+					if (alpha >= beta) {
+						i = _board->size;
+						j = _board->size;
+					}
 				}
 			}
 		}
@@ -131,13 +128,19 @@ int Player::minimax(Board _board,int depth, bool isMax){
 	}
 	else {
 		int maxValue = P_INF;
-		for (int i = 0; i < _board.size; i++) {
-			for (int j = 0; j < _board.size; j++) {
-				if (_board.board[i][j] == What::none) {
-					_board.board[i][j] = getOpponentChar();
-					scoreForMove = minimax(_board,depth+1,true);
+		for (int i = 0; i < _board->size; i++) {
+			for (int j = 0; j < _board->size; j++) {
+				if (_board->board[i][j] == What::none) {
+					_board->board[i][j] = getOpponentChar();
+					scoreForMove = minimax(_board, i, j, depth + 1, true, alpha, beta);
 					maxValue = std::min(scoreForMove, maxValue);
-					_board.board[i][j] = What::none;
+					_board->board[i][j] = What::none;
+					beta = std::min(beta, maxValue);
+					_board->board[i][j] = What::none;
+					if (alpha >= beta) {
+						i = _board->size;
+						j = _board->size;
+					}
 				}
 			}
 		}
