@@ -11,7 +11,7 @@ MainWin::MainWin() : wxFrame(nullptr, wxID_ANY, "Tic Tac Toe", wxPoint(0, 0), wx
 	handler = new wxPNGHandler; //utworzenie handlera dla zmian w tle
 	wxImage::AddHandler(handler);
 	name = "Gracz";
-	image.LoadFile(_T("E:\\Code\\TicTacToe\\TicTacToe.png"), wxBITMAP_TYPE_PNG); //za³adowanie t³a
+	image.LoadFile(wxT("AppBG1"), wxBITMAP_TYPE_BMP_RESOURCE); //za³adowanie t³a
 	Connect(wxEVT_PAINT, wxPaintEventHandler(MainWin::OnDraw)); //utworzenie po³¹czenia miêdzy zdarzeniami
 	this->Menu(); //otowrzenie menu g³ównego aplikacji
 }
@@ -113,6 +113,7 @@ void MainWin::clearGame() {//usuniêcie elementów okna gry, oraz usuniêcie funkcj
 	this->Menu();
 	wxEvtHandler::Unbind(wxEVT_BUTTON, &MainWin::OnEndClickedEdit, this, 1001, 1001);
 	delete game;
+	delete image2;
 }
 
 void MainWin::OnStartClicked(wxCommandEvent& e) { //uruchomienie gry
@@ -141,7 +142,9 @@ void MainWin::OnStartClicked(wxCommandEvent& e) { //uruchomienie gry
 			buttons[i * size + j]->SetBackgroundColour(wxColour(146, 198, 240, 255));
 		}
 	}
+
 	if (game->whoseMove() == Who::player2) {
+		image2 = new wxStaticBitmap(this, wxID_ANY, wxBitmap("E:\\Code\\TicTacToe\\O.png", wxBITMAP_TYPE_PNG), wxPoint(425, 125), wxSize(150, 150));
 		int move;
 		game->computerMove(move); //rych komputera
 		buttons[move]->SetLabel(game->getP2());  //Wyswietlenie informacji o przegranej u¿ytkownika
@@ -153,6 +156,7 @@ void MainWin::OnStartClicked(wxCommandEvent& e) { //uruchomienie gry
 	}
 	wxEvtHandler::Unbind(wxEVT_BUTTON, &onEndClicked, 1001, 1001); //usuniecie starej funkcji dla przycisku "X"
 	wxEvtHandler::Bind(wxEVT_BUTTON, &MainWin::OnEndClickedEdit, this, 1001, 1001);//ustawienie nowej funkcji
+	image2 = new wxStaticBitmap(this, wxID_ANY, wxBitmap("E:\\Code\\TicTacToe\\X.png", wxBITMAP_TYPE_PNG), wxPoint(425, 125), wxSize(150, 150));
 }
 
 void MainWin::OnSizesChange(wxCommandEvent& e) { //reakcja na zmianê w liœcie rozwijanej z informacj¹ o rozmiarze planszy
@@ -172,6 +176,9 @@ void MainWin::OnClickMove(wxCommandEvent& e) {
 	font.SetWeight(wxFONTWEIGHT_BOLD);
 	buttons[e.GetId() - 1]->SetFont(font);
 	int move;
+	delete image2;
+	image2= new wxStaticBitmap(this, wxID_ANY, wxBitmap("E:\\Code\\TicTacToe\\O.png", wxBITMAP_TYPE_PNG), wxPoint(425, 125), wxSize(150, 150));
+	wxMilliSleep(250);
 	if (game->playerMove(e.GetId() - 1)) { //playerMove zwraca true jesli zmiana na polu spowodowa³a wygran¹
 		wxMessageBox("Wygra³eœ/³aœ "+name, "", 0); //Wyswietlenie informacji o wygranej
 		clearGame();
@@ -189,6 +196,8 @@ void MainWin::OnClickMove(wxCommandEvent& e) {
 	else {
 		buttons[move]->SetLabel(game->getP2());
 		buttons[move]->SetFont(font);
+		delete image2;
+		image2 = new wxStaticBitmap(this, wxID_ANY, wxBitmap("E:\\Code\\TicTacToe\\X.png", wxBITMAP_TYPE_PNG), wxPoint(425, 125), wxSize(150, 150));
 		wxEvtHandler::Unbind(wxEVT_BUTTON, &MainWin::OnClickMove, this, move + 1, move + 1);//usuniecie funkcji z pola, w ktorym komputer ustawil swoj znak
 		if (game->isEnd()) { //sprawdzenie, czy nie jest juz koniec gry, tzn., czy sa jeszcze jakies puste pola, na które mozna sie ruszyæ
 			wxMessageBox("Remis", "", 0); //jeœli jest koniec i nie bylo wygranej mamy remis

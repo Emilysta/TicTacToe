@@ -2,6 +2,9 @@
 #include "wx/wx.h"
 #include "wx/combo.h"
 #include "Game.h"
+#include "wx/image.h"
+#include <wx/event.h>
+
 
 class MainWin : public wxFrame
 {
@@ -17,6 +20,7 @@ class MainWin : public wxFrame
 	wxStaticText* pNameText; //teskst w menu
 	/*t³o aplikacji w menu g³ównym*/
 	wxBitmap image;
+	wxStaticBitmap* image2;
 	wxImageHandler* handler;
 	/*gra*/
 	wxButton** buttons;
@@ -34,6 +38,7 @@ public:
 	void clearMain(); //wyczyœæ okno g³ówne z elementów
 	void clearGame(); //wyczyœæ okno gry z elementów
 	void OnDraw(wxPaintEvent& event); //Event potrzebny do tworzenia t³a okna g³ównego
+	//void OnDraw2(wxPaintEvent& event); //Event potrzebny do tworzenia zdjecia w oknie gry
 	void OnEndClickedEdit(wxCommandEvent& e); //Zmiana dzia³ania przycisku Koniec dla okna gry
 	void OnStartClicked(wxCommandEvent& e); //Rozpoczecie gry poprzez nacisniecie przycisku zacznij grê
 	void OnSizesChange(wxCommandEvent& e); //Event reaguj¹cy na zmianê w liœcie rozwijanej rozmiarów planszy

@@ -1,6 +1,7 @@
 #include "Player.h"
 #include <iostream>
 #include <algorithm>
+#include <fstream>
 #define P_INF 10000 //plus "nieskonczonsc"
 #define M_INF -10000 //minus "nieskonczonsc"
 
@@ -72,7 +73,8 @@ int Player::searchForOption(Board* _board, Who player, int& _row, int& _column) 
 		_column = tab[rand() % 2];
 		return 0;
 	}
-
+	std::ofstream file;
+	file.open("nowy.txt", std::ios::out);
 	int maxValue = M_INF;
 	int scoreForMove = 0;
 	for (int i = 0; i < _board->size; i++) {
@@ -81,6 +83,7 @@ int Player::searchForOption(Board* _board, Who player, int& _row, int& _column) 
 				_board->board[i][j] = whatChar;
 				scoreForMove = minimax(_board, i, j, 0, false, M_INF, P_INF);
 				_board->board[i][j] = What::none;
+				file<<scoreForMove<<" i: "<<i<<" j: "<<j<<std::endl;
 				if (scoreForMove > maxValue) {
 					_row = i;
 					_column = j;
@@ -89,6 +92,7 @@ int Player::searchForOption(Board* _board, Who player, int& _row, int& _column) 
 			}
 		}
 	}
+	file.close();
 	return 0;
 }
 
