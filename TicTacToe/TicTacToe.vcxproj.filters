@@ -56,4 +56,18 @@
       <Filter>Pliki zasobów</Filter>
     </ResourceCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\TicTacToe.bmp">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="..\X.bmp">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="..\plain.bmp">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="..\O.bmp">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

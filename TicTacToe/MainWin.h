@@ -4,7 +4,7 @@
 #include "Game.h"
 #include "wx/image.h"
 #include <wx/event.h>
-
+#include "resource.h"
 
 class MainWin : public wxFrame
 {

@@ -159,6 +159,12 @@
   <ItemGroup>
     <ResourceCompile Include="resource.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\O.bmp" />
+    <Image Include="..\plain.bmp" />
+    <Image Include="..\TicTacToe.bmp" />
+    <Image Include="..\X.bmp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
