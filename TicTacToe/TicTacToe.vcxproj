@@ -162,8 +162,16 @@
   <ItemGroup>
     <Image Include="..\O.bmp" />
     <Image Include="..\plain.bmp" />
+    <Image Include="..\Resouces\O.bmp" />
+    <Image Include="..\Resouces\plain.bmp" />
+    <Image Include="..\Resouces\TicTacToe.bmp" />
+    <Image Include="..\Resouces\X.bmp" />
     <Image Include="..\TicTacToe.bmp" />
     <Image Include="..\X.bmp" />
+    <Image Include="Resouces\O.bmp" />
+    <Image Include="Resouces\plain.bmp" />
+    <Image Include="Resouces\TicTacToe.bmp" />
+    <Image Include="Resouces\X.bmp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

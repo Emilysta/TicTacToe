@@ -44,13 +44,23 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+APPO               BITMAP                  "Resouces\\O.bmp"
+
+APPBG2             BITMAP                  "Resouces\\plain.bmp"
+
+APPBG1             BITMAP                  "Resouces\\TicTacToe.bmp"
+
+APPX               BITMAP                  "Resouces\\X.bmp"
+
 #endif    // Polski (Polska) resources
 /////////////////////////////////////////////////////////////////////////////
 
-AppBG1 BITMAP "E:\\Code\\TicTacToe\\TicTacToe.bmp"
-AppBG2 BITMAP "E:\\Code\\TicTacToe\\plain.bmp"
-AppX BITMAP "E:\\Code\\TicTacToe\\X.bmp"
-AppO BITMAP "E:\\Code\\TicTacToe\\O.bmp"
 
 
 #ifndef APSTUDIO_INVOKED

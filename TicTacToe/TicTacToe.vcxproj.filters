@@ -69,5 +69,29 @@
     <Image Include="..\O.bmp">
       <Filter>Pliki zasobów</Filter>
     </Image>
+    <Image Include="..\Resouces\O.bmp">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="..\Resouces\plain.bmp">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="..\Resouces\TicTacToe.bmp">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="..\Resouces\X.bmp">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="Resouces\O.bmp">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="Resouces\plain.bmp">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="Resouces\TicTacToe.bmp">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
+    <Image Include="Resouces\X.bmp">
+      <Filter>Pliki zasobów</Filter>
+    </Image>
   </ItemGroup>
 </Project>
