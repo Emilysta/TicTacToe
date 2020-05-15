@@ -2,10 +2,10 @@
 #include "Board.h"
 #include "Player.h"
 class Game{
-	Player* player_1;
-	Player* player_2;
-	Board* gameBoard;
-	int sizeOfBoard;
+	Player* player_1; //gracz nr 1
+	Player* player_2; //gracz nr 2
+	Board* gameBoard; //plansza
+	int sizeOfBoard; //rozmiar planszy
 
 public: 
 	Game();

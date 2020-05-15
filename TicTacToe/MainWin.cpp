@@ -11,7 +11,7 @@ MainWin::MainWin() : wxFrame(nullptr, wxID_ANY, "Tic Tac Toe", wxPoint(0, 0), wx
 	handler = new wxPNGHandler; //utworzenie handlera dla zmian w tle
 	wxImage::AddHandler(handler);
 	name = "Gracz";
-	image.LoadFile(wxT("APPBG1"), wxBITMAP_TYPE_BMP_RESOURCE); //za³adowanie t³a
+	image.LoadFile(wxT("APPBG1"), wxBITMAP_TYPE_BMP_RESOURCE); //za³adowanie t³a z zasobów
 	Connect(wxEVT_PAINT, wxPaintEventHandler(MainWin::OnDraw)); //utworzenie po³¹czenia miêdzy zdarzeniami
 	this->Menu(); //otowrzenie menu g³ównego aplikacji
 }
@@ -58,7 +58,7 @@ void MainWin::Menu() { //menu g³ówne
 
 	this->Center();
 	this->SetBackgroundColour(wxColour(208, 228, 245, 255));
-	image.LoadFile(wxT("APPBG1"), wxBITMAP_TYPE_BMP_RESOURCE); //Za³adowanie t³a
+	image.LoadFile(wxT("APPBG1"), wxBITMAP_TYPE_BMP_RESOURCE); //Za³adowanie t³a z zasobów
 	Refresh();
 
 	wxEvtHandler::Bind(wxEVT_TEXT, &MainWin::OnTextChange, this, 998, 998);
@@ -125,7 +125,7 @@ void MainWin::OnStartClicked(wxCommandEvent& e) { //uruchomienie gry
 	int i = first->GetSelection();
 
 	clearMain(); //wyczyszczenie okna
-	image.LoadFile(wxT("APPBG2"), wxBITMAP_TYPE_BMP_RESOURCE); //zmiana t³a
+	image.LoadFile(wxT("APPBG2"), wxBITMAP_TYPE_BMP_RESOURCE); //zmiana t³a na inny plik z zasobów
 	Refresh();
 	if (i == 0) {
 		game = new Game(size, in_line,Who::player1); //ustawienie gry
@@ -144,7 +144,7 @@ void MainWin::OnStartClicked(wxCommandEvent& e) { //uruchomienie gry
 	}
 
 	if (game->whoseMove() == Who::player2) {
-		image2 = new wxStaticBitmap(this, wxID_ANY, wxBitmap(wxT("APPO"), wxBITMAP_TYPE_BMP_RESOURCE), wxPoint(425, 125), wxSize(150, 150));
+		image2 = new wxStaticBitmap(this, wxID_ANY, wxBitmap(wxT("APPO"), wxBITMAP_TYPE_BMP_RESOURCE), wxPoint(425, 125), wxSize(150, 150)); //za³adownie bitmapy z zasobów
 		int move;
 		game->computerMove(move); //rych komputera
 		buttons[move]->SetLabel(game->getP2());  //Wyswietlenie informacji o przegranej u¿ytkownika
@@ -156,7 +156,7 @@ void MainWin::OnStartClicked(wxCommandEvent& e) { //uruchomienie gry
 	}
 	wxEvtHandler::Unbind(wxEVT_BUTTON, &onEndClicked, 1001, 1001); //usuniecie starej funkcji dla przycisku "X"
 	wxEvtHandler::Bind(wxEVT_BUTTON, &MainWin::OnEndClickedEdit, this, 1001, 1001);//ustawienie nowej funkcji
-	image2 = new wxStaticBitmap(this, wxID_ANY, wxBitmap(wxT("APPX"), wxBITMAP_TYPE_BMP_RESOURCE), wxPoint(425, 125), wxSize(150, 150));
+	image2 = new wxStaticBitmap(this, wxID_ANY, wxBitmap(wxT("APPX"), wxBITMAP_TYPE_BMP_RESOURCE), wxPoint(425, 125), wxSize(150, 150)); //za³adownie bitmapy z zasobów
 }
 
 void MainWin::OnSizesChange(wxCommandEvent& e) { //reakcja na zmianê w liœcie rozwijanej z informacj¹ o rozmiarze planszy
@@ -177,8 +177,8 @@ void MainWin::OnClickMove(wxCommandEvent& e) {
 	buttons[e.GetId() - 1]->SetFont(font);
 	int move;
 	delete image2;
-	image2= new wxStaticBitmap(this, wxID_ANY, wxBitmap(wxT("APPO"), wxBITMAP_TYPE_BMP_RESOURCE), wxPoint(425, 125), wxSize(150, 150));
-	wxMilliSleep(100);
+	image2= new wxStaticBitmap(this, wxID_ANY, wxBitmap(wxT("APPO"), wxBITMAP_TYPE_BMP_RESOURCE), wxPoint(425, 125), wxSize(150, 150)); //za³adownie bitmapy z zasobów
+	wxMilliSleep(100); //zwolnienie wstawiania pierwszych ruchów
 	if (game->playerMove(e.GetId() - 1)) { //playerMove zwraca true jesli zmiana na polu spowodowa³a wygran¹
 		wxMessageBox("Wygra³eœ/³aœ "+name, "", 0); //Wyswietlenie informacji o wygranej
 		clearGame();
@@ -197,7 +197,7 @@ void MainWin::OnClickMove(wxCommandEvent& e) {
 		buttons[move]->SetLabel(game->getP2());
 		buttons[move]->SetFont(font);
 		delete image2;
-		image2 = new wxStaticBitmap(this, wxID_ANY, wxBitmap(wxT("APPX"), wxBITMAP_TYPE_BMP_RESOURCE), wxPoint(425, 125), wxSize(150, 150));
+		image2 = new wxStaticBitmap(this, wxID_ANY, wxBitmap(wxT("APPX"), wxBITMAP_TYPE_BMP_RESOURCE), wxPoint(425, 125), wxSize(150, 150)); //za³adownie bitmapy z zasobów
 		wxEvtHandler::Unbind(wxEVT_BUTTON, &MainWin::OnClickMove, this, move + 1, move + 1);//usuniecie funkcji z pola, w ktorym komputer ustawil swoj znak
 		if (game->isEnd()) { //sprawdzenie, czy nie jest juz koniec gry, tzn., czy sa jeszcze jakies puste pola, na które mozna sie ruszyæ
 			wxMessageBox("Remis", "", 0); //jeœli jest koniec i nie bylo wygranej mamy remis
