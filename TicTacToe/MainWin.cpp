@@ -153,6 +153,7 @@ void MainWin::OnStartClicked(wxCommandEvent& e) { //uruchomienie gry
 		font.SetWeight(wxFONTWEIGHT_BOLD);
 		buttons[move]->SetFont(font);
 		wxEvtHandler::Unbind(wxEVT_BUTTON, &MainWin::OnClickMove, this, move + 1, move + 1);//usuniecie funkcji z pola, w ktorym komputer ustawil swoj znak
+		delete image2;
 	}
 	wxEvtHandler::Unbind(wxEVT_BUTTON, &onEndClicked, 1001, 1001); //usuniecie starej funkcji dla przycisku "X"
 	wxEvtHandler::Bind(wxEVT_BUTTON, &MainWin::OnEndClickedEdit, this, 1001, 1001);//ustawienie nowej funkcji
